@@ -1,0 +1,77 @@
+local mt = getrawmetatable(game)
+local oldNamecall = mt.__namecall
+
+local players = game:GetService('Players')
+local lp = players.LocalPlayer
+local plrGui = lp.PlayerGui
+local character = lp.Character or lp.CharacterAdded:Wait()
+
+local replicated = game:GetService('ReplicatedStorage')
+local package = replicated.ReplicatedPackage
+local remotes = package.Remotes
+local action = remotes.action
+local distance = remotes.Distance
+local entities = workspace.Entities
+local mobs = entities.Enemies
+
+local function godMode() 
+    if lp.Character and lp.Character:FindFirstChild('HumanoidRootPart') and lp.Character.Humanoid.Health >= 1 then 
+        distance:FireServer(0/0, 0/0, 'High')
+    end 
+end 
+godMode()
+
+oldNamecall = hookmetamethod(game, '__namecall', function(self, ...)
+    local args = {...}
+    local method = getnamecallmethod()
+
+    if self == distance and not checkcaller() and (method == 'FireServer' or method == 'FireServer') then 
+        args[1] = 0/0 
+        args[2] = 0/0 
+        args[3] = 'High' 
+        return oldNamecall(table.unpack(args), ...)
+    end 
+    return oldNamecall(self, ...)
+end)
+
+local function fireMove()
+    action:FireServer('M1')
+end
+
+local function waitForRespawn()
+    while not lp.Character or not lp.Character:FindFirstChild('Humanoid') or lp.Character.Humanoid.Health <= 0 do
+        task.wait()
+    end
+    character = lp.Character or lp.CharacterAdded:Wait()
+    godMode()
+end
+
+local function farmAllMobs()
+    while getgenv().isFarming do
+        for _, value in ipairs(mobs:GetChildren()) do
+            if value.ClassName == 'Model' and value:FindFirstChild('HumanoidRootPart') and value.Humanoid.Health >= 1 and getgenv().npcsToFarm[value.Name] then
+                value.HumanoidRootPart.Size = Vector3.new(25, 25, 25)
+                
+                for _, parts in ipairs(value:GetChildren()) do
+                    if parts:IsA('Part') or parts:IsA('BasePart') then
+                        parts.CanCollide = false
+                    end
+                end
+                
+                repeat
+                    task.wait()
+                    character:SetPrimaryPartCFrame(value.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0))  -- Changed offset to +5
+                    fireMove()
+                until value.Humanoid.Health <= 0
+            end
+        end
+        
+        if not lp.Character or not lp.Character:FindFirstChild('Humanoid') or lp.Character.Humanoid.Health <= 0 then
+            waitForRespawn()
+        end
+        
+        task.wait()
+    end
+end
+
+farmAllMobs()
