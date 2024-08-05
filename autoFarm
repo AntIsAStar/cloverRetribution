@@ -13,7 +13,6 @@ local distance = remotes.Distance
 local entities = workspace.Entities
 local mobs = entities.Enemies
 
-
 if not getgenv().hooked then
     getgenv().hooked = true
     local mt = getrawmetatable(game)
@@ -40,11 +39,9 @@ local function godMode()
 end 
 godMode()
 
-
 local function fireMove()
     action:FireServer('M1')
 end
-
 
 local function waitForRespawn()
     while not lp.Character or not lp.Character:FindFirstChild('Humanoid') or lp.Character.Humanoid.Health <= 0 do
@@ -68,9 +65,9 @@ local function farmAllMobs()
                 
                 repeat
                     task.wait()
-                    character:SetPrimaryPartCFrame(value.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0))  -- Changed offset to +5
+                    character:SetPrimaryPartCFrame(value.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0))
                     fireMove()
-                until value.Humanoid.Health <= 0 or not getgenv().isFarming
+                until value.Humanoid.Health <= 0 or not getgenv().isFarming or not getgenv().npcsToFarm[value.Name]
             end
         end
         
