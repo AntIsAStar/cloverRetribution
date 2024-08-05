@@ -70,7 +70,7 @@ local function farmAllMobs()
                     task.wait()
                     character:SetPrimaryPartCFrame(value.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0))  -- Changed offset to +5
                     fireMove()
-                until value.Humanoid.Health <= 0
+                until value.Humanoid.Health <= 0 or not getgenv().isFarming
             end
         end
         
