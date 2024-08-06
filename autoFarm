@@ -67,7 +67,7 @@ local function farmAllMobs()
                 repeat
                     task.wait()
                     local cf = value.HumanoidRootPart.CFrame + getgenv().offset
-                    local rotatedCF = cf * CFrame.Angles(math.rad(90), 0, 0) -- Rotate 90 degrees to lay down on stomach
+                    local rotatedCF = cf * CFrame.Angles(math.rad(-90), 0, 0)
                     character:SetPrimaryPartCFrame(rotatedCF)
                     fireMove()
                 until value.Humanoid.Health <= 0 or not getgenv().isFarming or not getgenv().npcsToFarm[value.Name]
