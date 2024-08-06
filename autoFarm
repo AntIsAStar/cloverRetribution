@@ -13,6 +13,7 @@ local distance = remotes.Distance
 local entities = workspace.Entities
 local mobs = entities.Enemies
 
+
 if not getgenv().hooked then
     getgenv().hooked = true
     local mt = getrawmetatable(game)
@@ -65,7 +66,9 @@ local function farmAllMobs()
                 
                 repeat
                     task.wait()
-                    character:SetPrimaryPartCFrame(value.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0))
+                    local cf = value.HumanoidRootPart.CFrame + getgenv().offset
+                    local rotatedCF = cf * CFrame.Angles(math.rad(90), 0, 0) -- Rotate 90 degrees to lay down on stomach
+                    character:SetPrimaryPartCFrame(rotatedCF)
                     fireMove()
                 until value.Humanoid.Health <= 0 or not getgenv().isFarming or not getgenv().npcsToFarm[value.Name]
             end
